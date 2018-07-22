@@ -55,3 +55,5 @@ module.exports = function gerp() {
         start
     };
 };
+
+module.exports.grpc = grpc;
