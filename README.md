@@ -91,7 +91,7 @@ server.use(async function({request, metadata, cancelled}, next) {
     // these objects are shared across all handlers, so you should mutate them
     // CAVEAT: if the request is a primitive value, you will not be able to mutate it
     const result = await next();
-    // do sonething with result.response and result.metadata
+    // do something with result.response and result.metadata
     return result;
 });
 // returns server, for chaining
