@@ -31,7 +31,7 @@ module.exports = function server(options) {
     function addEmptyMetadata(response) {
         return {
             response,
-            metadata: new grpc.Metadata()
+            metadata: {}
         };
     }
 
@@ -51,15 +51,23 @@ module.exports = function server(options) {
         return next(0);
     }
 
+    function nativeMetadata(metadata) {
+        const nativeMetadata = new grpc.Metadata();
+
+        for (let key in metadata) {
+            nativeMetadata.set(key, metadata[key]);
+        }
+
+        return nativeMetadata;
+    }
+
     function internalHandler(name, call, callback) {
         const { request, metadata, cancelled } = call;
 
         // No failing at the handlers!
         try {
-            // XXX turn metadata from grpc.Metadata into plain object...
-            run(name, request, metadata, cancelled)
-                // XXX ...and turn it into a grpc.Metadata now
-                .then(({response, metadata}) => callback(null, response, metadata))
+            run(name, request, metadata.getMap(), cancelled)
+                .then(({response, metadata}) => callback(null, response, nativeMetadata(metadata)))
                 .catch(error => callback(formatError(error)));
         } catch(error) {
             callback(formatError(error));
