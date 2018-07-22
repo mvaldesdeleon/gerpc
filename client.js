@@ -4,10 +4,9 @@ const grpc = require('grpc');
 const DEFAULT_HOST = '127.0.0.1';
 const DEFAULT_PORT = 5000;
 
-module.exports = function client({host = DEFAULT_HOST, port = DEFAULT_PORT, encode, decode}, credentials) {
-    // XXX credentials + native options should be exposed as top-level arguments
+module.exports = function client({host = DEFAULT_HOST, port = DEFAULT_PORT, encode, decode}, credentials, options) {
     const insecureCredentials = grpc.credentials.createInsecure();
-    const client = new grpc.Client(`${host}:${port}`, credentials || insecureCredentials);
+    const client = new grpc.Client(`${host}:${port}`, credentials || insecureCredentials, options);
     let globalEncode, globalDecode;
 
     const close = client.close.bind(client);

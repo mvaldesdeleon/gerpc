@@ -4,10 +4,9 @@ const grpc = require('grpc');
 const DEFAULT_HOST = '0.0.0.0';
 const DEFAULT_PORT = 5000;
 
-module.exports = function server() {
-    // XXX credentials + native options should be exposed as top-level arguments
+module.exports = function server(options) {
     const insecureCredentials = grpc.ServerCredentials.createInsecure();
-    const server = new grpc.Server();
+    const server = new grpc.Server(options);
     let globalEncode, globalDecode;
 
     const tryShutdown = promisify(server.tryShutdown.bind(server));
