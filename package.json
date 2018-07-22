@@ -1,5 +1,5 @@
 {
-  "name": "gerp",
+  "name": "gerpc",
   "version": "1.0.0",
   "description": "Expressive grpc server, with plugabble encoding",
   "main": "index.js",
@@ -13,7 +13,7 @@
   "devDependencies": {
     "eslint": "^5.2.0"
   },
-  "repository": "mvaldesdeleon/gerp",
+  "repository": "mvaldesdeleon/gerpc",
   "keywords": [
     "grpc",
     "server",

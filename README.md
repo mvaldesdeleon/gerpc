@@ -1,4 +1,4 @@
-# gerp
+# gerpc
 
 Expressive grpc server, with plugabble encoding.
 
@@ -15,11 +15,11 @@ For those scenarios, one should be able to keep their existing encoding in place
 # Use
 
 ```
-const gerp = require('gerp');
-const server = gerp();
+const gerpc = require('gerpc');
+const server = gerpc();
 
 // internal `grpc` is exposed if you need to access it
-const grpc = gerp.grpc;
+const grpc = gerpc.grpc;
 
 // name and handler must be provided to register a new method
 // method-specific encoder and decoder can be provided as optional third and fourth parameters, respectively
@@ -62,7 +62,7 @@ server.start({port: 8080, encode, decode});
 With [npm](https://npmjs.org) do:
 
 ```
-npm install gerp
+npm install gerpc
 ```
 
 # License

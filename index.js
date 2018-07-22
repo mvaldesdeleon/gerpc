@@ -4,7 +4,7 @@ const grpc = require('grpc');
 const DEFAULT_HOST = '0.0.0.0';
 const DEFAULT_PORT = 5000;
 
-module.exports = function gerp() {
+module.exports = function gerpc() {
     const server = new grpc.Server();
     const insecureCredentials = grpc.ServerCredentials.createInsecure();
     let globalEncode, globalDecode;
