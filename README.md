@@ -8,7 +8,7 @@ Scope is limited to exactly my use case.
 
 While gRPC itself explicitly claims that using protobuf is optional, it seems the commonly-used libraries remove this option completely (or at the very least do not document how to access it).
 
-Protobuf is a great idea, but it comes at the price of requiring you to specify your protocol upfront. While this by itself is also desireable, it might not be possible for a large project that is consider switghing from HTTP to gRPC.
+Protobuf is a great idea, but it comes at the price of requiring you to specify your protocol upfront. While this by itself is also desireable, it might not be possible for a large project that is consider switching from HTTP to gRPC.
 
 For those scenarios, one should be able to keep their existing encoding in place, and just rely on gRPC for transport.
 
