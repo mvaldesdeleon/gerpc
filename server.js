@@ -1,8 +1,8 @@
 const { promisify } = require('util');
 const grpc = require('grpc');
 
+const { nativeMetadata, DEFAULT_PORT } = require('./common.js');
 const DEFAULT_HOST = '0.0.0.0';
-const DEFAULT_PORT = 5000;
 
 module.exports = function server(options) {
     const insecureCredentials = grpc.ServerCredentials.createInsecure();
@@ -49,16 +49,6 @@ module.exports = function server(options) {
         }
 
         return next(0);
-    }
-
-    function nativeMetadata(metadata) {
-        const nativeMetadata = new grpc.Metadata();
-
-        for (let key in metadata) {
-            nativeMetadata.set(key, metadata[key]);
-        }
-
-        return nativeMetadata;
     }
 
     function internalHandler(name, call, callback) {

@@ -1,8 +1,8 @@
 const { promisify } = require('util');
 const grpc = require('grpc');
 
+const { nativeMetadata, DEFAULT_PORT } = require('./common.js');
 const DEFAULT_HOST = '127.0.0.1';
-const DEFAULT_PORT = 5000;
 
 module.exports = function client({host = DEFAULT_HOST, port = DEFAULT_PORT, encode, decode}, credentials, options) {
     const insecureCredentials = grpc.credentials.createInsecure();
@@ -18,13 +18,13 @@ module.exports = function client({host = DEFAULT_HOST, port = DEFAULT_PORT, enco
 
     const instance = { ready, call, close };
 
-    function ready(deadline) {
+    function ready(deadline = +Infinity) {
         return waitForReady(Date.now() + deadline).then(() => instance);
     }
 
-    function call(method, request, metadata, encode, decode) {
+    function call(method, request, metadata = {}, encode, decode) {
         // XXX Check that (encode || globalEncode) and (decode || globalDecode) are valid.
-        return makeUnaryRequest(method, encode || globalEncode, decode || globalDecode, request, metadata);
+        return makeUnaryRequest(method, encode || globalEncode, decode || globalDecode, request, nativeMetadata(metadata));
     }
 
     return instance;
