@@ -14,7 +14,7 @@ For those scenarios, one should be able to keep their existing encoding in place
 
 # Use
 
-```
+```js
 const gerpc = require('gerpc');
 const server = gerpc();
 
