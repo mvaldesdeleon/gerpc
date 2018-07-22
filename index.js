@@ -38,10 +38,10 @@ module.exports = function gerp() {
         function next(index) {
             const middleware = middlewares[index];
 
-            // API: middleware: ({request, metadata, cancelled}, next) -> {response, metadata}
-            // API: next: () -> {response, metadata}
+            // API: middleware: ({request, metadata, cancelled}, next) -> Promise({response, metadata})
+            // API: next: () -> Promise({response, metadata})
             if (middleware) return middleware({request, metadata, cancelled}, () => next(index + 1));
-            // API: methodHandler: request -> response
+            // API: methodHandler: request -> Promise(response)
             else return methodHandler(request).then(addEmptyMetadata);
         }
 
