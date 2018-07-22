@@ -25,19 +25,36 @@ module.exports = function gerp() {
         return error;
     }
 
-    function internalHandler(name, call, callback) {
-        // we need to run the middlewares, plus the methods[name] handler
-        // and deal with the callback stuff
-        // here is also where we define the API for the handler and the middlewares
-        // call: {cancelled, metadata, request, getPeer(), sendMetadata()}
-        // metadata: {add(), clone(), get(), getMap(), remove(), set()}
-        // callback: callback(error, value, trailer, flags)
-        //
+    function addEmptyMetadata(response) {
+        return {
+            response,
+            metadata: new grpc.Metadata()
+        };
+    }
+
+    function run(name, request, metadata, cancelled) {
         const methodHandler = methods[name];
 
+        function next(index) {
+            const middleware = middlewares[index];
+
+            // API: middleware: ({request, metadata, cancelled}, next) -> {response, metadata}
+            // API: next: () -> {response, metadata}
+            if (middleware) return middleware({request, metadata, cancelled}, () => next(index + 1));
+            // API: methodHandler: request -> response
+            else return methodHandler(request).then(addEmptyMetadata);
+        }
+
+        return next(0);
+    }
+
+    function internalHandler(name, call, callback) {
+        const { request, metadata, cancelled } = call;
+
+        // No failing at the handlers!
         try {
-            methodHandler(call.request)
-                .then(result => callback(null, result))
+            run(name, request, metadata, cancelled)
+                .then(({response, metadata}) => callback(null, response, metadata))
                 .catch(error => callback(formatError(error)));
         } catch(error) {
             callback(formatError(error));
