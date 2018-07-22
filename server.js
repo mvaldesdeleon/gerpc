@@ -4,13 +4,16 @@ const grpc = require('grpc');
 const { nativeMetadata, DEFAULT_PORT } = require('./common.js');
 const DEFAULT_HOST = '0.0.0.0';
 
-module.exports = function server(options) {
+module.exports = function server({encode, decode}, options) {
     const insecureCredentials = grpc.ServerCredentials.createInsecure();
     const server = new grpc.Server(options);
     let globalEncode, globalDecode;
 
     const tryShutdown = promisify(server.tryShutdown.bind(server));
     const forceShutdown = server.forceShutdown.bind(server);
+
+    globalEncode = encode;
+    globalDecode = decode;
 
     const methods = {};
     const middlewares = [];
@@ -66,13 +69,10 @@ module.exports = function server(options) {
 
     const instance = { start, method, use };
 
-    function start({host = DEFAULT_HOST, port = DEFAULT_PORT, encode, decode}, credentials = insecureCredentials) {
+    function start({host = DEFAULT_HOST, port = DEFAULT_PORT }, credentials = insecureCredentials) {
         // XXX Check that the server is not started more than once. Right now it defaults to `grpc`s behaviour
         server.bind(`${host}:${port}`, credentials);
         server.start();
-
-        globalEncode = encode;
-        globalDecode = decode;
 
         return {
             tryShutdown,

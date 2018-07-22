@@ -50,17 +50,30 @@ client.ready().then(async client => {
 
     // disconnect from the server
     client.close();
-})
+});
 ```
 
 ## Server
 
 ```js
 const gerpc = require('gerpc');
-const server = gerpc.server();
 
 // internal `grpc` is exposed if you need to access it
 const grpc = gerpc.grpc;
+
+// encode: * -> Buffer
+function encode(input) {
+    return Buffer.from(JSON.stringify(input), 'utf8');
+}
+
+// decode: Buffer -> *
+function decode(input) {
+    return JSON.parse(input.toString('utf8'));
+}
+
+// create the grpc server, with the provided default encoder and decoder
+// native options are also accepted as an optional second argument
+const server = gerpc.server({encode, decode});
 
 // name and handler must be provided to register a new method
 // method-specific encoder and decoder can be provided as optional third and fourth arguments, respectively
@@ -83,20 +96,10 @@ server.use(async function({request, metadata, cancelled}, next) {
 });
 // returns server, for chaining
 
-// encode: * -> Buffer
-function encode(input) {
-    return Buffer.from(JSON.stringify(input), 'utf8');
-}
-
-// decode: Buffer -> *
-function decode(input) {
-    return JSON.parse(input.toString('utf8'));
-}
-
-// start the grpc server, with the provided default encoder and decoder
+// start the grpc server
 // host defaults to '0.0.0.0' and can be overriden
-// server credentials and native options are also accepted as optional second and third arguments, respectively
-server.start({port: 8080, encode, decode});
+// server credentials are also accepted as optional second argument
+server.start({port: 8080});
 // returns { tryShutdown, forceShutdown }
 // tryShutdown: () -> Promise(undefined)
 // forceShutdown: () -> undefined
