@@ -1,6 +1,6 @@
 # gerpc
 
-Expressive grpc server, with plugabble encoding.
+Expressive grpc client/server, with plugabble encoding.
 
 Scope is limited to exactly my use case.
 
@@ -14,20 +14,62 @@ For those scenarios, one should be able to keep their existing encoding in place
 
 # Use
 
+## Client
+
 ```js
 const gerpc = require('gerpc');
-const server = gerpc();
+
+// internal `grpc` is exposed if you need to access it
+const grpc = gerpc.grpc;
+
+// encode: * -> Buffer
+function encode(input) {
+    return Buffer.from(JSON.stringify(input), 'utf8');
+}
+
+// decode: Buffer -> *
+function decode(input) {
+    return JSON.parse(input.toString('utf8'));
+}
+
+// start the grpc client, with the provided default encoder and decoder
+// client credentials are also accepted as an optional second argument
+const client = gerpc.client({host: 'example.com', port: 8080, encode, decode});
+
+// wait until connected
+// optional timeout in ms can be provided as argument
+// resolves to the client instance, for chaining
+client.ready().then(async client => {
+    // method name and request message must be provided
+    // optional metadata can be provided as plain object as the third argument
+    // call-specific encoder and decoder can be provided as optional third and fourth arguments, respectively
+    // if not provided, the default encoder and decoder will be used instead
+    const response = await client.call('beep', {robot: true});
+
+    console.log(response);
+
+    // disconnect from the server
+    client.close();
+})
+```
+
+## Server
+
+```js
+const gerpc = require('gerpc');
+const server = gerpc.server();
 
 // internal `grpc` is exposed if you need to access it
 const grpc = gerpc.grpc;
 
 // name and handler must be provided to register a new method
-// method-specific encoder and decoder can be provided as optional third and fourth parameters, respectively
+// method-specific encoder and decoder can be provided as optional third and fourth arguments, respectively
 // if not provided, the default encoder and decoder will be used instead
 // handler: request -> Promise(respose)
 server.method('beep', function(request) {
     return Promise.resolve('boop');
 });
+// returns server, for chaining
 
 // middleware: ({request, metadata, cancelled}, next) -> Promise({response, metadata})
 // next: () -> Promise({response, metadata})
@@ -39,6 +81,7 @@ server.use(async function({request, metadata, cancelled}, next) {
     // do sonething with result.response and result.metadata
     return result;
 });
+// returns server, for chaining
 
 // encode: * -> Buffer
 function encode(input) {
@@ -52,8 +95,11 @@ function decode(input) {
 
 // start the grpc server, with the provided default encoder and decoder
 // host defaults to '0.0.0.0' and can be overriden
-// server credentials are also accepted as an optional second argument
+// server credentials and native options are also accepted as optional second and third arguments, respectively
 server.start({port: 8080, encode, decode});
+// returns { tryShutdown, forceShutdown }
+// tryShutdown: () -> Promise(undefined)
+// forceShutdown: () -> undefined
 
 // and now you have a running gRPC server, using (binary) JSON for encoding/decoding its messages
 ```
