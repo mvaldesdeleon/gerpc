@@ -1,7 +1,7 @@
 {
   "name": "gerpc",
-  "version": "1.0.0",
-  "description": "Expressive grpc server, with plugabble encoding",
+  "version": "1.1.0",
+  "description": "Expressive grpc client/server, with plugabble encoding",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
@@ -16,6 +16,7 @@
   "repository": "mvaldesdeleon/gerpc",
   "keywords": [
     "grpc",
+    "client",
     "server",
     "unary",
     "mali",
