@@ -17,10 +17,31 @@ module.exports = function gerp() {
         server.register(name, (...args) => internalHandler(name, ...args), encode || globalEncode, decode || globalDecode, 'unary');
     }
 
+    function formatError(error) {
+        if (error === null || typeof error !== 'object') error = new Error(error);
+        // message, code, details, metadata
+        error.code = grpc.status.INTERNAL;
+
+        return error;
+    }
+
     function internalHandler(name, call, callback) {
         // we need to run the middlewares, plus the methods[name] handler
         // and deal with the callback stuff
         // here is also where we define the API for the handler and the middlewares
+        // call: {cancelled, metadata, request, getPeer(), sendMetadata()}
+        // metadata: {add(), clone(), get(), getMap(), remove(), set()}
+        // callback: callback(error, value, trailer, flags)
+        //
+        const methodHandler = methods[name];
+
+        try {
+            methodHandler(call.request)
+                .then(result => callback(null, result))
+                .catch(error => callback(formatError(error)));
+        } catch(error) {
+            callback(formatError(error));
+        }
     }
 
     function start({host = DEFAULT_HOST, port = DEFAULT_PORT, encode, decode}, credentials = insecureCredentials) {
