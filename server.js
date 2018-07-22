@@ -66,6 +66,8 @@ module.exports = function server(options) {
         }
     }
 
+    const instance = { start, method, use };
+
     function start({host = DEFAULT_HOST, port = DEFAULT_PORT, encode, decode}, credentials = insecureCredentials) {
         // XXX Check that the server is not started more than once. Right now it defaults to `grpc`s behaviour
         server.bind(`${host}:${port}`, credentials);
@@ -85,18 +87,14 @@ module.exports = function server(options) {
 
         methods[name] = handler;
 
-        return true; // XXX Chainable API?
+        return instance;
     }
 
     function use(middleware) {
         middlewares.push(middleware);
 
-        return true; // XXX Chainable API?
+        return instance;
     }
 
-    return {
-        method,
-        use,
-        start
-    };
+    return instance;
 };

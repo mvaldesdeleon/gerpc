@@ -16,8 +16,10 @@ module.exports = function client({host = DEFAULT_HOST, port = DEFAULT_PORT, enco
     globalEncode = encode;
     globalDecode = decode;
 
+    const instance = { ready, call, close };
+
     function ready(deadline) {
-        return waitForReady(Date.now() + deadline); // XXX Chainable API?
+        return waitForReady(Date.now() + deadline).then(() => instance);
     }
 
     function call(method, request, metadata, encode, decode) {
@@ -25,9 +27,5 @@ module.exports = function client({host = DEFAULT_HOST, port = DEFAULT_PORT, enco
         return makeUnaryRequest(method, encode || globalEncode, decode || globalDecode, request, metadata);
     }
 
-    return {
-        ready,
-        call,
-        close
-    };
+    return instance;
 };
