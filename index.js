@@ -4,10 +4,14 @@ const grpc = require('grpc');
 const DEFAULT_HOST = '0.0.0.0';
 const DEFAULT_PORT = 5000;
 
-module.exports = function gerpc() {
-    const server = new grpc.Server();
+module.exports = function server() {
+    // XXX credentials + native options should be exposed as top-level arguments
     const insecureCredentials = grpc.ServerCredentials.createInsecure();
+    const server = new grpc.Server();
     let globalEncode, globalDecode;
+
+    const tryShutdown = promisify(server.tryShutdown.bind(server));
+    const forceShutdown = server.forceShutdown.bind(server);
 
     const methods = {};
     const middlewares = [];
@@ -53,7 +57,9 @@ module.exports = function gerpc() {
 
         // No failing at the handlers!
         try {
+            // XXX turn metadata from grpc.Metadata into plain object...
             run(name, request, metadata, cancelled)
+                // XXX ...and turn it into a grpc.Metadata now
                 .then(({response, metadata}) => callback(null, response, metadata))
                 .catch(error => callback(formatError(error)));
         } catch(error) {
@@ -70,8 +76,8 @@ module.exports = function gerpc() {
         globalDecode = decode;
 
         return {
-            tryShutdown: promisify(server.tryShutdown.bind(server)),
-            forceShutdown: server.forceShutdown.bind(server)
+            tryShutdown,
+            forceShutdown
         };
     }
 
@@ -85,6 +91,8 @@ module.exports = function gerpc() {
 
     function use(middleware) {
         middlewares.push(middleware);
+
+        return true; // XXX Chainable API?
     }
 
     return {
@@ -93,5 +101,3 @@ module.exports = function gerpc() {
         start
     };
 };
-
-module.exports.grpc = grpc;
