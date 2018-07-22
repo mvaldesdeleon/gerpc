@@ -1,0 +1,27 @@
+{
+  "name": "gerp",
+  "version": "1.0.0",
+  "description": "Expressive grpc server, with plugabble encoding",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "grpc": "^1.13.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.2.0"
+  },
+  "repository": "mvaldesdeleon/gerp",
+  "keywords": [
+    "grpc",
+    "server",
+    "unary",
+    "mali",
+    "koa",
+    "expressive"
+  ],
+  "author": "Martin Valdes de Leon <m.valdesdeleon@gmail.com>",
+  "license": "MIT"
+}
