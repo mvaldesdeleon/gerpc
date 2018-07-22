@@ -107,6 +107,10 @@ server.start({port: 8080});
 // and now you have a running gRPC server, using (binary) JSON for encoding/decoding its messages
 ```
 
+# Example
+
+See `test.js`. Not a proper test (yet), but serves as working example, combining both use cases above.
+
 # Install
 With [npm](https://npmjs.org) do:
 
