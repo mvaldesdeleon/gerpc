@@ -1,6 +1,10 @@
 declare module 'gerpc' {
     import * as Grpc from 'grpc';
 
+    interface IMetadata {
+        [key: string]: string;
+    }
+
     interface IClientOptions {
         host?: string;
         port?: number | string;
@@ -13,7 +17,7 @@ declare module 'gerpc' {
         call: <A, B>(
             method: string,
             request: A,
-            metadata?: object,
+            metadata?: IMetadata,
             encode?: Grpc.serialize<A>,
             decode?: Grpc.deserialize<B>
         ) => B;
@@ -45,13 +49,13 @@ declare module 'gerpc' {
 
     interface IMiddlewareRequest {
         request: any;
-        metadata: object;
+        metadata: IMetadata;
         cancelled: boolean;
     }
 
     interface IMiddlewareResponse {
         response: any;
-        metadata?: object;
+        metadata?: IMetadata;
     }
 
     type IMiddlewareNext = () => Promise<IMiddlewareResponse>;
