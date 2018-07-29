@@ -1,6 +1,6 @@
 {
   "name": "gerpc",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Expressive grpc client/server, with plugabble encoding",
   "main": "index.js",
   "types": "index.d.ts",

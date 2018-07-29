@@ -51,7 +51,7 @@ declare module 'gerpc' {
 
     interface IMiddlewareResponse {
         response: any;
-        metadata: object;
+        metadata?: object;
     }
 
     type IMiddlewareNext = () => Promise<IMiddlewareResponse>;

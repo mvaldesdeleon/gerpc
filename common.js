@@ -2,7 +2,7 @@ const grpc = require('grpc');
 
 const DEFAULT_PORT = 5000;
 
-function nativeMetadata(metadata) {
+function nativeMetadata(metadata = {}) {
     const nativeMetadata = new grpc.Metadata();
 
     for (let key in metadata) {
