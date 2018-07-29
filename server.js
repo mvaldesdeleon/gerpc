@@ -4,9 +4,9 @@ const grpc = require('grpc');
 const { nativeMetadata, DEFAULT_PORT } = require('./common.js');
 const DEFAULT_HOST = '0.0.0.0';
 
-module.exports = function server({encode, decode}, options) {
+module.exports = function server({encode, decode}, nativeOptions) {
     const insecureCredentials = grpc.ServerCredentials.createInsecure();
-    const server = new grpc.Server(options);
+    const server = new grpc.Server(nativeOptions);
     let globalEncode, globalDecode;
 
     const tryShutdown = promisify(server.tryShutdown.bind(server));
