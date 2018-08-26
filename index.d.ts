@@ -33,6 +33,7 @@ declare module 'gerpc' {
     interface IServerOptions {
         encode?: Grpc.serialize<any>;
         decode?: Grpc.serialize<any>;
+        debug?: boolean;
     }
 
     interface IServerStartOptions {

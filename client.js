@@ -23,8 +23,18 @@ module.exports = function client({host = DEFAULT_HOST, port = DEFAULT_PORT, enco
     }
 
     function call(method, request, metadata = {}, encode, decode) {
-        // XXX Check that (encode || globalEncode) and (decode || globalDecode) are valid.
-        return makeUnaryRequest(method, encode || globalEncode, decode || globalDecode, request, nativeMetadata(metadata));
+        if (!(encode || globalEncode)) throw new Error('An `encode` function must be provided, either globally or for each method.');
+        if (!(decode || globalDecode)) throw new Error('A `decode` function must be provided, either globally or for each method.');
+
+        return makeUnaryRequest(method, encode || globalEncode, decode || globalDecode, request, nativeMetadata(metadata))
+            .catch(error => {
+                const metadata = error.metadata.getMap();
+
+                error.serverError = (decode || globalDecode)(metadata['error-bin']);
+                delete error.metadata;
+
+                return Promise.reject(error);
+            });
     }
 
     return instance;
